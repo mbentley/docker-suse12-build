@@ -2,7 +2,9 @@
 
 set -e
 
-DOCKER_VERSION=${DOCKER_VERSION:-1.9.0}
+DOCKER_VERSION=${DOCKER_VERSION:-1.9.1-cs3}
+ENGINE_TYPE=${ENGINE_TYPE:-cs}
+MAKE_OPTS=${MAKE_OPTS:-dynbinary}
 TEMP_DIR=${TEMP_DIR:-/data}
 
 ### check to see if TEMP_DIR exists
@@ -13,10 +15,23 @@ then
 fi
 
 ### clone and checkout docker repository
-git clone https://github.com/docker/docker.git
-cd docker
+case $ENGINE_TYPE in
+  cs)
+    GIT_REPO="cs-docker"
+    ;;
+  oss)
+    GIT_REPO="docker"
+    ;;
+  *)
+    echo "Invalid ENGINE_TYPE (cs|oss)"
+    exit 1
+    ;;
+esac
+
+git clone https://github.com/docker/${GIT_REPO}.git
+cd ${GIT_REPO}
 git checkout tags/v${DOCKER_VERSION}
-AUTO_GOPATH=1 DOCKER_BUILDTAGS="selinux" hack/make.sh dynbinary
+AUTO_GOPATH=1 DOCKER_BUILDTAGS="selinux" hack/make.sh ${MAKE_OPTS}
 
 ### create directory
 mkdir ${TEMP_DIR}/suse12_docker-engine-${DOCKER_VERSION}

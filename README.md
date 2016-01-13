@@ -12,7 +12,9 @@ Example usage:
 ```
 docker run -it --rm \
   -v /data/suse12-build:/data \
-  -e DOCKER_VERSION=1.9.0 \
+  -e DOCKER_VERSION=1.9.1-cs3 \
+  -e ENGINE_TYPE=cs \
+  -e MAKE_OPTS=dynbinary \
   -e TEMP_DIR=/data \
   mbentley/suse12-build:latest
 ```
