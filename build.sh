@@ -4,7 +4,6 @@ set -e
 
 DOCKER_VERSION=${DOCKER_VERSION:-1.9.1-cs3}
 ENGINE_TYPE=${ENGINE_TYPE:-cs}
-MAKE_OPTS=${MAKE_OPTS:-dynbinary}
 TEMP_DIR=${TEMP_DIR:-/data}
 
 ### check to see if TEMP_DIR exists
@@ -31,7 +30,7 @@ esac
 git clone https://github.com/docker/${GIT_REPO}.git
 cd ${GIT_REPO}
 git checkout tags/v${DOCKER_VERSION}
-AUTO_GOPATH=1 DOCKER_BUILDTAGS="selinux" hack/make.sh ${MAKE_OPTS}
+AUTO_GOPATH=1 DOCKER_BUILDTAGS="selinux" hack/make.sh dynbinary
 
 ### create directory
 mkdir ${TEMP_DIR}/suse12_docker-engine-${DOCKER_VERSION}
