@@ -13,7 +13,7 @@ then
   mkdir ${TEMP_DIR}
 fi
 
-### clone and checkout docker repository
+# set engine type based on env var
 case $ENGINE_TYPE in
   cs)
     GIT_REPO="cs-docker"
@@ -27,6 +27,7 @@ case $ENGINE_TYPE in
     ;;
 esac
 
+### clone and checkout docker repository
 git clone https://github.com/docker/${GIT_REPO}.git
 cd ${GIT_REPO}
 git checkout tags/v${DOCKER_VERSION}
@@ -87,11 +88,14 @@ echo "installing nanofiles"
 install -d /usr/share/nano
 install -p -m 644 contrib/syntax/nano/Dockerfile.nanorc /usr/share/nano/Dockerfile.nanorc
 
-# enable and start docker
-echo "enabling and starting the docker daemon (this may take a few minutes)"
+# reload systemd configuration
 systemctl daemon-reload
-systemctl enable docker
-systemctl start docker
+
+# installation complete
+echo "installation complete."
+echo "make sure to enable and start the docker daemon when ready:"
+echo "systemctl enable docker"
+echo "systemctl start docker"
 
 echo "done."
 EOF
