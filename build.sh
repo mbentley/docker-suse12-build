@@ -2,8 +2,8 @@
 
 set -e
 
-DOCKER_VERSION=${DOCKER_VERSION:-1.9.1-cs3}
-ENGINE_TYPE=${ENGINE_TYPE:-cs}
+DOCKER_VERSION=${DOCKER_VERSION:-1.9.1}
+GIT_REPO=${GIT_REPO:-docker/docker}
 TEMP_DIR=${TEMP_DIR:-/data}
 
 ### check to see if TEMP_DIR exists
@@ -13,30 +13,19 @@ then
   mkdir ${TEMP_DIR}
 fi
 
-# set engine type based on env var
-case $ENGINE_TYPE in
-  cs)
-    GIT_REPO="cs-docker"
-    ;;
-  oss)
-    GIT_REPO="docker"
-    ;;
-  *)
-    echo "Invalid ENGINE_TYPE (cs|oss)"
-    exit 1
-    ;;
-esac
+# get the directory name from the git repo
+GIT_DIR=$(echo ${GIT_REPO} | awk -F '/' '{print $2}')
 
 ### clone and checkout docker repository
-git clone https://github.com/docker/${GIT_REPO}.git
-cd ${GIT_REPO}
+git clone https://github.com/${GIT_REPO}.git
+cd ${GIT_DIR}
 git checkout tags/v${DOCKER_VERSION}
 AUTO_GOPATH=1 DOCKER_BUILDTAGS="selinux" hack/make.sh dynbinary
 
 ### create directory
 mkdir ${TEMP_DIR}/suse12_docker-engine-${DOCKER_VERSION}
 
-### copy necessary files over
+### copy necessary files
 cp --parents bundles/${DOCKER_VERSION}/dynbinary/docker-${DOCKER_VERSION} bundles/${DOCKER_VERSION}/dynbinary/dockerinit-${DOCKER_VERSION} contrib/udev/80-docker.rules contrib/init/systemd/docker.service contrib/init/systemd/docker.socket contrib/completion/bash/docker contrib/completion/zsh/_docker contrib/completion/fish/docker.fish contrib/syntax/vim/doc/dockerfile.txt contrib/syntax/vim/ftdetect/dockerfile.vim contrib/syntax/vim/syntax/dockerfile.vim contrib/syntax/nano/Dockerfile.nanorc ${TEMP_DIR}/suse12_docker-engine-${DOCKER_VERSION}
 
 ### create install script

@@ -12,8 +12,8 @@ Example usage:
 ```
 docker run -it --rm \
   -v /data/suse12-build:/data \
-  -e DOCKER_VERSION=1.9.1-cs3 \
-  -e ENGINE_TYPE=cs \
+  -e DOCKER_VERSION=1.9.1 \
+  -e GIT_REPO=docker/docker \
   -e TEMP_DIR=/data \
   mbentley/suse12-build:latest
 ```
