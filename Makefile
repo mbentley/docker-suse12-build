@@ -1,4 +1,4 @@
-all: image run
+all: image build
 
 DOCKER_VERSION ?= 1.9.1
 GIT_REPO ?= docker/docker
